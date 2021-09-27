@@ -25,13 +25,17 @@ class Board extends React.Component {
 
     handleClick(i) {
         const squares = this.state.squares.slice();
+        if (calculateWinner(squares) || squares[i]) {
+            return;
+        }
         squares[i] = this.state.xIsNext ? 'X' : 'O';
-        // remember that the ? is an alternative way of writing an if statement; essentially best to be used in the case where one of two values will be assigned to a variable based on a conditional statement.
         this.setState({
             squares: squares,
             xIsNext: !this.state.xIsNext,
         });
     }
+
+    // ^ Changed the Board’s handleClick function to return early by ignoring a click if someone has won the game or if a Square is already filled
 
     renderSquare(i) {
         return ( 
@@ -43,7 +47,13 @@ class Board extends React.Component {
 }
 
 render() {
-    const status = 'Next Player: ' + (this.state.xIsNext ? 'X' : 'O');
+    const winner = calculateWinner(this.state.squares);
+    let status;
+    if (winner) {
+        status = 'Winner: ' + winner;
+    } else {
+        status = 'Next Player: ' + (this.state.xIsNext ? 'X' : 'O');
+    }
 
     return (
         <div>
@@ -103,6 +113,8 @@ function calculateWinner(squares) {
     }
     return null;
 }
+
+// ^ Given an array of 9 squares, this function will check for a winner and return 'X', 'O', or null as appropriate.
 
 ReactDOM.render(
     <Game />,
